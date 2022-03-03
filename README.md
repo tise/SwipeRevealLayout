@@ -26,7 +26,7 @@ Drag mode same_level:
 #### Dependencies
 ```groovy
 dependencies {
-    implementation 'com.github.tise:SwipeRevealLayout:v1.4.3'
+    implementation 'com.github.tise:SwipeRevealLayout:v1.4.2'
 }
 ```
 
