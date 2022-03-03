@@ -20,13 +20,13 @@ Drag mode same_level:
   * Normal (the secondary view is underneath the main view).
   * Same level (the secondary view sticks to the edge of the main view).
 * Able to open one row at a time.
-* Minimum api level 9.
+* Minimum api level 21.
 
 ### Usage
 #### Dependencies
 ```groovy
 dependencies {
-    compile 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
+    implementation 'com.github.tise:SwipeRevealLayout:v1.4.3'
 }
 ```
 
