@@ -90,16 +90,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         public ViewHolder(View itemView) {
             super(itemView);
-            swipeLayout = (SwipeRevealLayout) itemView.findViewById(R.id.swipe_layout);
+            swipeLayout = itemView.findViewById(R.id.swipe_layout);
             frontLayout = itemView.findViewById(R.id.front_layout);
             deleteLayout = itemView.findViewById(R.id.delete_layout);
-            textView = (TextView) itemView.findViewById(R.id.text);
+            textView = itemView.findViewById(R.id.text);
         }
 
         public void bind(final String data) {
             deleteLayout.setOnClickListener(v -> {
-                mDataSet.remove(getBindingAdapterPosition());
-                notifyItemRemoved(getBindingAdapterPosition());
+                mDataSet.remove(getAdapterPosition());
+                notifyItemRemoved(getAdapterPosition());
             });
 
             textView.setText(data);
