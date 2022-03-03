@@ -1,16 +1,15 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'com.jfrog.bintray'
+apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 31
+    buildToolsVersion "30.0.2"
 
     defaultConfig {
-        minSdkVersion 9
-        targetSdkVersion 24
-        versionCode 8
-        versionName "1.4.1"
+        minSdkVersion 21
+        targetSdkVersion 31
+        versionCode 9
+        versionName "1.4.2"
     }
     buildTypes {
         release {
@@ -21,33 +20,13 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:24.2.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.customview:customview:1.1.0'
+    implementation 'androidx.core:core:1.7.0'
+    implementation "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
-
-ext {
-    bintrayRepo = 'maven'
-    bintrayName = 'swipe-reveal-layout'
-
-    publishedGroupId = 'com.chauthai.swipereveallayout'
-    libraryName = 'SwipeRevealLayout'
-    artifact = 'swipe-reveal-layout'
-
-    libraryDescription = 'Easy, fast and powerful Swipe Layout for Android'
-
-    siteUrl = 'https://github.com/chthai64/SwipeRevealLayout'
-    gitUrl = 'https://github.com/chthai64/SwipeRevealLayout.git'
-
-    libraryVersion = '1.4.1'
-
-    developerId = 'chthai64'
-    developerName = 'Chau Thai'
-    developerEmail = 'chthai64@gmail.com'
-
-    licenseName = 'The MIT License (MIT)'
-    licenseUrl = 'https://opensource.org/licenses/MIT'
-    allLicenses = ["MIT"]
+repositories {
+    mavenCentral()
 }
-
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'

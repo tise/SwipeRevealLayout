@@ -54,19 +54,11 @@ public class ListAdapter extends ArrayAdapter<String> {
             binderHelper.bind(holder.swipeLayout, item);
 
             holder.textView.setText(item);
-            holder.deleteView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    remove(item);
-                }
-            });
-            holder.frontView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    String displayText = "" + item + " clicked";
-                    Toast.makeText(getContext(), displayText, Toast.LENGTH_SHORT).show();
-                    Log.d("ListAdapter", displayText);
-                }
+            holder.deleteView.setOnClickListener(v -> remove(item));
+            holder.frontView.setOnClickListener(view -> {
+                String displayText = "" + item + " clicked";
+                Toast.makeText(getContext(), displayText, Toast.LENGTH_SHORT).show();
+                Log.d("ListAdapter", displayText);
             });
         }
 
@@ -75,7 +67,7 @@ public class ListAdapter extends ArrayAdapter<String> {
 
     /**
      * Only if you need to restore open/close state when the orientation is changed.
-     * Call this method in {@link android.app.Activity#onSaveInstanceState(Bundle)}
+     * Call this method in Activity#onSaveInstanceState(Bundle)
      */
     public void saveStates(Bundle outState) {
         binderHelper.saveStates(outState);
@@ -83,13 +75,13 @@ public class ListAdapter extends ArrayAdapter<String> {
 
     /**
      * Only if you need to restore open/close state when the orientation is changed.
-     * Call this method in {@link android.app.Activity#onRestoreInstanceState(Bundle)}
+     * Call this method in Activity#onRestoreInstanceState(Bundle)
      */
     public void restoreStates(Bundle inState) {
         binderHelper.restoreStates(inState);
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         SwipeRevealLayout swipeLayout;
         View frontView;
         View deleteView;

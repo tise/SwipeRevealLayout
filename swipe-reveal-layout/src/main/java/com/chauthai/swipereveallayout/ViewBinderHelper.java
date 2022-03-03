@@ -1,25 +1,25 @@
 /**
- The MIT License (MIT)
-
- Copyright (c) 2016 Chau Thai
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
+ * The MIT License (MIT)
+ * <p>
+ * Copyright (c) 2016 Chau Thai
+ * <p>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * <p>
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * <p>
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 package com.chauthai.swipereveallayout;
@@ -42,15 +42,15 @@ import java.util.Set;
  * save and restore the open/close state of the view.</p>
  *
  * <p>Optionally, if you also want to save and restore the open/close state when the device's
- * orientation is changed, call {@link #saveStates(Bundle)} in {@link android.app.Activity#onSaveInstanceState(Bundle)}
- * and {@link #restoreStates(Bundle)} in {@link android.app.Activity#onRestoreInstanceState(Bundle)}</p>
+ * orientation is changed, call {@link #saveStates(Bundle)} in Activity#onSaveInstanceState(Bundle)
+ * and {@link #restoreStates(Bundle)} in Activity#onRestoreInstanceState(Bundle)</p>
  */
 public class ViewBinderHelper {
     private static final String BUNDLE_MAP_KEY = "ViewBinderHelper_Bundle_Map_Key";
 
-    private Map<String, Integer> mapStates = Collections.synchronizedMap(new HashMap<String, Integer>());
-    private Map<String, SwipeRevealLayout> mapLayouts = Collections.synchronizedMap(new HashMap<String, SwipeRevealLayout>());
-    private Set<String> lockedSwipeSet = Collections.synchronizedSet(new HashSet<String>());
+    private Map<String, Integer> mapStates = Collections.synchronizedMap(new HashMap<>());
+    private final Map<String, SwipeRevealLayout> mapLayouts = Collections.synchronizedMap(new HashMap<>());
+    private final Set<String> lockedSwipeSet = Collections.synchronizedSet(new HashSet<>());
 
     private volatile boolean openOnlyOne = false;
     private final Object stateChangeLock = new Object();
@@ -71,14 +71,10 @@ public class ViewBinderHelper {
         mapLayouts.put(id, swipeLayout);
 
         swipeLayout.abort();
-        swipeLayout.setDragStateChangeListener(new SwipeRevealLayout.DragStateChangeListener() {
-            @Override
-            public void onDragStateChanged(int state) {
-                mapStates.put(id, state);
-
-                if (openOnlyOne) {
-                    closeOthers(id, swipeLayout);
-                }
+        swipeLayout.setDragStateChangeListener(state -> {
+            mapStates.put(id, state);
+            if (openOnlyOne) {
+                closeOthers(id, swipeLayout);
             }
         });
 
@@ -90,13 +86,13 @@ public class ViewBinderHelper {
 
         // not the first time, then close or open depends on the current state.
         else {
-            int state = mapStates.get(id);
-
-            if (state == SwipeRevealLayout.STATE_CLOSE || state == SwipeRevealLayout.STATE_CLOSING ||
-                    state == SwipeRevealLayout.STATE_DRAGGING) {
-                swipeLayout.close(false);
-            } else {
-                swipeLayout.open(false);
+            Integer state = mapStates.get(id);
+            if (state != null) {
+                if (state == SwipeRevealLayout.STATE_CLOSE || state == SwipeRevealLayout.STATE_CLOSING || state == SwipeRevealLayout.STATE_DRAGGING) {
+                    swipeLayout.close(false);
+                } else {
+                    swipeLayout.open(false);
+                }
             }
         }
 
@@ -106,7 +102,7 @@ public class ViewBinderHelper {
 
     /**
      * Only if you need to restore open/close state when the orientation is changed.
-     * Call this method in {@link android.app.Activity#onSaveInstanceState(Bundle)}
+     * Call this method in Activity#onSaveInstanceState(Bundle)
      */
     public void saveStates(Bundle outState) {
         if (outState == null)
@@ -123,9 +119,8 @@ public class ViewBinderHelper {
 
     /**
      * Only if you need to restore open/close state when the orientation is changed.
-     * Call this method in {@link android.app.Activity#onRestoreInstanceState(Bundle)}
+     * Call this method in Activity#onRestoreInstanceState(Bundle)
      */
-    @SuppressWarnings({"unchecked", "ConstantConditions"})
     public void restoreStates(Bundle inState) {
         if (inState == null)
             return;
@@ -179,9 +174,10 @@ public class ViewBinderHelper {
 
             if (mapLayouts.containsKey(id)) {
                 final SwipeRevealLayout layout = mapLayouts.get(id);
-                layout.open(true);
-            }
-            else if (openOnlyOne) {
+                if (layout != null) {
+                    layout.open(true);
+                }
+            } else if (openOnlyOne) {
                 closeOthers(id, mapLayouts.get(id));
             }
         }
@@ -197,7 +193,9 @@ public class ViewBinderHelper {
 
             if (mapLayouts.containsKey(id)) {
                 final SwipeRevealLayout layout = mapLayouts.get(id);
-                layout.close(true);
+                if (layout != null) {
+                    layout.close(true);
+                }
             }
         }
     }

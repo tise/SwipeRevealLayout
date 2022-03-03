@@ -1,11 +1,13 @@
 package com.chauthai.swipereveallayoutdemo;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +16,6 @@ import java.util.List;
  * Created by Chau Thai on 4/8/16.
  */
 public class RecyclerDemoActivity extends AppCompatActivity {
-    private RecyclerView recyclerView;
     private RecyclerAdapter adapter;
 
     @Override
@@ -26,7 +27,7 @@ public class RecyclerDemoActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
         // Only if you need to restore open/close state when
@@ -48,17 +49,17 @@ public class RecyclerDemoActivity extends AppCompatActivity {
     }
 
     private void setupList() {
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new RecyclerAdapter(this, createList(20));
+        adapter = new RecyclerAdapter(this, createList());
         recyclerView.setAdapter(adapter);
     }
 
-    private List<String> createList(int n) {
+    private List<String> createList() {
         List<String> list = new ArrayList<>();
 
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < 20; i++) {
             list.add("View " + i);
         }
 
@@ -73,12 +74,7 @@ public class RecyclerDemoActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finish();
-                }
-            });
+            toolbar.setNavigationOnClickListener(v -> finish());
         }
     }
 }

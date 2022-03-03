@@ -1,4 +1,4 @@
-/**
+/*
  The MIT License (MIT)
 
  Copyright (c) 2016 Chau Thai
@@ -29,16 +29,17 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
-import android.support.v4.view.GestureDetectorCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.core.view.GestureDetectorCompat;
+import androidx.core.view.ViewCompat;
+import androidx.customview.widget.ViewDragHelper;
 
 @SuppressLint("RtlHardcoded")
 public class SwipeRevealLayout extends ViewGroup {
@@ -80,22 +81,22 @@ public class SwipeRevealLayout extends ViewGroup {
     /**
      * The rectangle position of the main view when the layout is closed.
      */
-    private Rect mRectMainClose = new Rect();
+    private final Rect mRectMainClose = new Rect();
 
     /**
      * The rectangle position of the main view when the layout is opened.
      */
-    private Rect mRectMainOpen  = new Rect();
+    private final Rect mRectMainOpen  = new Rect();
 
     /**
      * The rectangle position of the secondary view when the layout is closed.
      */
-    private Rect mRectSecClose  = new Rect();
+    private final Rect mRectSecClose  = new Rect();
 
     /**
      * The rectangle position of the secondary view when the layout is opened.
      */
-    private Rect mRectSecOpen   = new Rect();
+    private final Rect mRectSecOpen   = new Rect();
 
     /**
      * The minimum distance (px) to the closest drag edge that the SwipeRevealLayout
@@ -183,6 +184,7 @@ public class SwipeRevealLayout extends ViewGroup {
         super(context, attrs, defStyleAttr);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         mGestureDetector.onTouchEvent(event);
@@ -230,7 +232,6 @@ public class SwipeRevealLayout extends ViewGroup {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         mAborted = false;
@@ -255,10 +256,8 @@ public class SwipeRevealLayout extends ViewGroup {
             boolean matchParentWidth = false;
 
             if (childParams != null) {
-                matchParentHeight = (childParams.height == LayoutParams.MATCH_PARENT) ||
-                        (childParams.height == LayoutParams.FILL_PARENT);
-                matchParentWidth = (childParams.width == LayoutParams.MATCH_PARENT) ||
-                        (childParams.width == LayoutParams.FILL_PARENT);
+                matchParentHeight = childParams.height == LayoutParams.MATCH_PARENT;
+                matchParentWidth = childParams.width == LayoutParams.MATCH_PARENT;
             }
 
             if (matchParentHeight) {
@@ -280,12 +279,6 @@ public class SwipeRevealLayout extends ViewGroup {
                     break;
 
                 case DRAG_EDGE_LEFT:
-                    left    = Math.min(getPaddingLeft(), maxRight);
-                    top     = Math.min(getPaddingTop(), maxBottom);
-                    right   = Math.min(measuredChildWidth + getPaddingLeft(), maxRight);
-                    bottom  = Math.min(measuredChildHeight + getPaddingTop(), maxBottom);
-                    break;
-
                 case DRAG_EDGE_TOP:
                     left    = Math.min(getPaddingLeft(), maxRight);
                     top     = Math.min(getPaddingTop(), maxBottom);
@@ -401,7 +394,7 @@ public class SwipeRevealLayout extends ViewGroup {
             }
 
             if (widthMode == MeasureSpec.AT_MOST) {
-                desiredWidth = (desiredWidth > measuredWidth)? measuredWidth : desiredWidth;
+                desiredWidth = Math.min(desiredWidth, measuredWidth);
             }
         }
 
@@ -414,7 +407,7 @@ public class SwipeRevealLayout extends ViewGroup {
             }
 
             if (heightMode == MeasureSpec.AT_MOST) {
-                desiredHeight = (desiredHeight > measuredHeight)? measuredHeight : desiredHeight;
+                desiredHeight = Math.min(desiredHeight, measuredHeight);
             }
         }
 
@@ -611,8 +604,6 @@ public class SwipeRevealLayout extends ViewGroup {
                 return mRectMainClose.left - mSecondaryView.getWidth();
 
             case DRAG_EDGE_TOP:
-                return mRectMainClose.left;
-
             case DRAG_EDGE_BOTTOM:
                 return mRectMainClose.left;
 
@@ -624,8 +615,6 @@ public class SwipeRevealLayout extends ViewGroup {
     private int getMainOpenTop() {
         switch (mDragEdge) {
             case DRAG_EDGE_LEFT:
-                return mRectMainClose.top;
-
             case DRAG_EDGE_RIGHT:
                 return mRectMainClose.top;
 
@@ -858,7 +847,7 @@ public class SwipeRevealLayout extends ViewGroup {
 
     private final ViewDragHelper.Callback mDragHelperCallback = new ViewDragHelper.Callback() {
         @Override
-        public boolean tryCaptureView(View child, int pointerId) {
+        public boolean tryCaptureView(@NonNull View child, int pointerId) {
             mAborted = false;
 
             if (mLockDrag)
@@ -869,7 +858,7 @@ public class SwipeRevealLayout extends ViewGroup {
         }
 
         @Override
-        public int clampViewPositionVertical(View child, int top, int dy) {
+        public int clampViewPositionVertical(@NonNull View child, int top, int dy) {
             switch (mDragEdge) {
                 case DRAG_EDGE_TOP:
                     return Math.max(
@@ -889,7 +878,7 @@ public class SwipeRevealLayout extends ViewGroup {
         }
 
         @Override
-        public int clampViewPositionHorizontal(View child, int left, int dx) {
+        public int clampViewPositionHorizontal(@NonNull View child, int left, int dx) {
             switch (mDragEdge) {
                 case DRAG_EDGE_RIGHT:
                     return Math.max(
@@ -909,7 +898,7 @@ public class SwipeRevealLayout extends ViewGroup {
         }
 
         @Override
-        public void onViewReleased(View releasedChild, float xvel, float yvel) {
+        public void onViewReleased(@NonNull View releasedChild, float xvel, float yvel) {
             final boolean velRightExceeded =  pxToDp((int) xvel) >= mMinFlingVelocity;
             final boolean velLeftExceeded =   pxToDp((int) xvel) <= -mMinFlingVelocity;
             final boolean velUpExceeded =     pxToDp((int) yvel) <= -mMinFlingVelocity;
@@ -1003,7 +992,7 @@ public class SwipeRevealLayout extends ViewGroup {
         }
 
         @Override
-        public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
+        public void onViewPositionChanged(@NonNull View changedView, int left, int top, int dx, int dy) {
             super.onViewPositionChanged(changedView, left, top, dx, dy);
             if (mMode == MODE_SAME_LEVEL) {
                 if (mDragEdge == DRAG_EDGE_LEFT || mDragEdge == DRAG_EDGE_RIGHT) {
